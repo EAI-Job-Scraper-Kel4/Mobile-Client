@@ -59,6 +59,7 @@ class JobCard extends StatelessWidget {
   }
 
   void _launchURL(String url) async {
+    await launchUrl(Uri.parse(url));
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {

@@ -10,12 +10,36 @@ Future<List<Job>> fetchJobsFromApi([Map<String, dynamic>? filters]) async {
     filters.removeWhere((key, value) => value == null || value.toString().isEmpty);
     uri = uri.replace(queryParameters: filters);
   }
-  print("Ini urinya " + uri.toString());
+
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {
-    List jsonResponse = json.decode(response.body)['jobs'];
-    return jsonResponse.map((job) => Job.fromJson(job)).toList();
+    dynamic jsonResponse = json.decode(response.body);
+
+    if(jsonResponse.isEmpty){
+      print("masuk sini");
+      return [];
+    } else {
+      List jsonResponse = json.decode(response.body)['jobs'];
+      return jsonResponse.map((job) => Job.fromJson(job)).toList();
+    }
+    // List jsonResponse = json.decode(response.body)['jobs'];
+    // if (jsonResponse != null) {
+    //   print("jsonResponse nggak null");
+    //   // Handle the case where the response is a list of jobs
+    //   return jsonResponse.map((job) => Job.fromJson(job)).toList();
+    // } else {
+    //   print("jsonResponse null");
+    //   // Handle the case where the response is an empty object
+    //   // Return an empty list or throw an error, depending on your requirements
+    //   return [];
+    // }
+    // print("Ini responsenya ");
+    // print(response);
+    // List jsonResponse = json.decode(response.body)['jobs'];
+    // print("Ini json responsenya ");
+    // print(jsonResponse);
+    // return jsonResponse.map((job) => Job.fromJson(job)).toList();
   } else {
     throw Exception('Failed to load jobs');
   }
