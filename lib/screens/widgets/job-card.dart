@@ -44,14 +44,14 @@ class JobCard extends StatelessWidget {
 
   // Method to get the button text based on the job source
   String _getButtonText(String source) {
-    switch (source) {
-      case 'linkedin.com':
+    switch (source.toLowerCase()) {
+      case 'linkedin':
         return 'Go To LinkedIn';
-      case 'karir.com':
+      case 'karir':
         return 'Go To Karir';
-      case 'kalibrr.com':
+      case 'kalibrr':
         return 'Go To Kalibrr';
-      case 'jobstreet.co.id':
+      case 'jobstreet':
         return 'Go To JobStreet';
       default:
         return 'Go To Source';
@@ -60,9 +60,7 @@ class JobCard extends StatelessWidget {
 
   void _launchURL(String url) async {
     await launchUrl(Uri.parse(url));
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
+    if (!await canLaunchUrl(Uri.parse(url))) {
       throw 'Could not launch $url';
     }
   }

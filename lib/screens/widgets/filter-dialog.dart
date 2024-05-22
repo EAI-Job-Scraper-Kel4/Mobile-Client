@@ -12,7 +12,7 @@ class FilterDialog extends StatefulWidget {
 
 class _FilterDialogState extends State<FilterDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _jobTypeController = TextEditingController();
+  final _jobNameController = TextEditingController();
   final _companyController = TextEditingController();
   final _locationController = TextEditingController();
   DateTime? _publicationDate;
@@ -37,7 +37,7 @@ class _FilterDialogState extends State<FilterDialog> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: _jobTypeController,
+                      controller: _jobNameController,
                       decoration: InputDecoration(labelText: 'Type of Job'),
                     ),
                     TextFormField(
@@ -81,9 +81,9 @@ class _FilterDialogState extends State<FilterDialog> {
                       if (_formKey.currentState!.validate()) {
                         Navigator.of(context).pop();
                         widget.onApplyFilter({
-                          'jobType': _jobTypeController.text,
+                          'jobName': _jobNameController.text,
                           'company': _companyController.text,
-                          'location': _locationController.text,
+                          'jobLocation': _locationController.text,
                           'publicationDate': _publicationDate != null ? DateFormat('yyyy-MM-dd').format(_publicationDate!) : null,
                         });
                       }
@@ -107,7 +107,7 @@ class _FilterDialogState extends State<FilterDialog> {
 
   @override
   void dispose() {
-    _jobTypeController.dispose();
+    _jobNameController.dispose();
     _companyController.dispose();
     _locationController.dispose();
     super.dispose();
