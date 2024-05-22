@@ -10,49 +10,52 @@ class JobCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              job.jobName,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(job.company),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(job.jobLocation),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('Published on: ${job.publicationDate}'),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Icon(Icons.link),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    job.source,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  job.jobName,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.open_in_new),
-                  onPressed: () => _launchURL(job.sourceUrl),
-                ),
+                SizedBox(height: 8.0),
+                Text(job.company),
+                SizedBox(height: 8.0),
+                Text(job.jobLocation),
+                SizedBox(height: 8.0),
+                Text('Published on: ${job.publicationDate}'),
               ],
             ),
-          ),
-        ],
+            Center(
+              child: ElevatedButton(
+                onPressed: () => _launchURL(job.sourceUrl),
+                child: Text(_getButtonText(job.source)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  // Method to get the button text based on the job source
+  String _getButtonText(String source) {
+    switch (source) {
+      case 'linkedin.com':
+        return 'Go To LinkedIn';
+      case 'karir.com':
+        return 'Go To Karir';
+      case 'kalibrr.com':
+        return 'Go To Kalibrr';
+      case 'jobstreet.co.id':
+        return 'Go To JobStreet';
+      default:
+        return 'Go To Source';
+    }
   }
 
   void _launchURL(String url) async {
