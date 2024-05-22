@@ -10,7 +10,7 @@ Future<List<Job>> fetchJobsFromApi([Map<String, dynamic>? filters]) async {
     filters.removeWhere((key, value) => value == null || value.toString().isEmpty);
     uri = uri.replace(queryParameters: filters);
   }
-
+  print("Ini urinya " + uri.toString());
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {

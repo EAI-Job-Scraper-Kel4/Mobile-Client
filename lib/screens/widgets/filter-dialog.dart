@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class FilterDialog extends StatefulWidget {
   final void Function(Map<String, dynamic>) onApplyFilter;
@@ -65,7 +66,7 @@ class _FilterDialogState extends State<FilterDialog> {
                       child: Text(
                         _publicationDate == null
                             ? 'Select Publication Date'
-                            : 'Publication Date: ${_publicationDate!.toLocal()}'.split(' ')[0],
+                            : 'Publication Date: ${DateFormat('yyyy-MM-dd').format(_publicationDate!)}',
                       ),
                     ),
                   ],
@@ -83,7 +84,7 @@ class _FilterDialogState extends State<FilterDialog> {
                           'jobType': _jobTypeController.text,
                           'company': _companyController.text,
                           'location': _locationController.text,
-                          'publicationDate': _publicationDate?.toIso8601String(),
+                          'publicationDate': _publicationDate != null ? DateFormat('yyyy-MM-dd').format(_publicationDate!) : null,
                         });
                       }
                     },
