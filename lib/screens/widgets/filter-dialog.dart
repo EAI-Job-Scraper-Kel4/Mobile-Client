@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class FilterDialog extends StatefulWidget {
   final void Function(Map<String, dynamic>) onApplyFilter;
@@ -12,10 +11,24 @@ class FilterDialog extends StatefulWidget {
 
 class _FilterDialogState extends State<FilterDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _jobNameController = TextEditingController();
-  final _companyController = TextEditingController();
-  final _locationController = TextEditingController();
-  DateTime? _publicationDate;
+  List<TextEditingController> _jobNameControllers = [TextEditingController()];
+  List<TextEditingController> _companyControllers = [TextEditingController()];
+  List<TextEditingController> _locationControllers = [TextEditingController()];
+  String? _publicationDateCategory;
+  final List<String> _dateCategories = [
+    'today',
+    'two_days_ago',
+    'one_week_ago',
+    'two_weeks_ago',
+    'one_month_ago'
+  ];
+  List<String> _selectedSources = [];
+  final List<String> _sources = [
+    'LinkedIn',
+    'Jobstreet',
+    'Kalibrr',
+    'Karir',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -30,45 +43,60 @@ class _FilterDialogState extends State<FilterDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Filter Jobs', style: TextStyle(fontSize: 20)),
+              Text('Filter Jobs', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
               SizedBox(height: 16),
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    TextFormField(
-                      controller: _jobNameController,
-                      decoration: InputDecoration(labelText: 'Type of Job'),
+                    _buildDynamicFields(
+                      label: 'Type of Job',
+                      controllers: _jobNameControllers,
+                      addField: () => setState(() => _jobNameControllers.add(TextEditingController())),
+                      removeField: (index) => setState(() {
+                        if (_jobNameControllers.length > 1) {
+                          _jobNameControllers.removeAt(index);
+                        }
+                      }),
                     ),
-                    TextFormField(
-                      controller: _companyController,
-                      decoration: InputDecoration(labelText: 'Company'),
+                    _buildDynamicFields(
+                      label: 'Company',
+                      controllers: _companyControllers,
+                      addField: () => setState(() => _companyControllers.add(TextEditingController())),
+                      removeField: (index) => setState(() {
+                        if (_companyControllers.length > 1) {
+                          _companyControllers.removeAt(index);
+                        }
+                      }),
                     ),
-                    TextFormField(
-                      controller: _locationController,
-                      decoration: InputDecoration(labelText: 'Location'),
+                    _buildDynamicFields(
+                      label: 'Location',
+                      controllers: _locationControllers,
+                      addField: () => setState(() => _locationControllers.add(TextEditingController())),
+                      removeField: (index) => setState(() {
+                        if (_locationControllers.length > 1) {
+                          _locationControllers.removeAt(index);
+                        }
+                      }),
                     ),
                     SizedBox(height: 8),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null) {
-                          setState(() {
-                            _publicationDate = pickedDate;
-                          });
-                        }
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(labelText: 'Publication Date Category'),
+                      value: _publicationDateCategory,
+                      items: _dateCategories
+                          .map((category) => DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category.replaceAll('_', ' ').toUpperCase()),
+                      ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _publicationDateCategory = value;
+                        });
                       },
-                      child: Text(
-                        _publicationDate == null
-                            ? 'Select Publication Date'
-                            : 'Publication Date: ${DateFormat('yyyy-MM-dd').format(_publicationDate!)}',
-                      ),
                     ),
+                    SizedBox(height: 16),
+                    _buildSourceSelection(),
                   ],
                 ),
               ),
@@ -81,20 +109,27 @@ class _FilterDialogState extends State<FilterDialog> {
                       if (_formKey.currentState!.validate()) {
                         Navigator.of(context).pop();
                         widget.onApplyFilter({
-                          'jobName': _jobNameController.text,
-                          'company': _companyController.text,
-                          'jobLocation': _locationController.text,
-                          'publicationDate': _publicationDate != null ? DateFormat('yyyy-MM-dd').format(_publicationDate!) : null,
+                          'jobName': _jobNameControllers.map((controller) => controller.text).toList(),
+                          'company': _companyControllers.map((controller) => controller.text).toList(),
+                          'jobLocation': _locationControllers.map((controller) => controller.text).toList(),
+                          'publicationDateCategory': _publicationDateCategory,
+                          'source': _selectedSources.join(','),
                         });
                       }
                     },
                     child: Text('Apply Filters'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.deepPurple,
+                    ),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                     child: Text('Cancel'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.deepPurple,
+                    ),
                   ),
                 ],
               ),
@@ -105,11 +140,85 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
+  Widget _buildDynamicFields({
+    required String label,
+    required List<TextEditingController> controllers,
+    required VoidCallback addField,
+    required Function(int) removeField,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+        ...controllers.asMap().entries.map((entry) {
+          int index = entry.key;
+          TextEditingController controller = entry.value;
+          return Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller,
+                  decoration: InputDecoration(labelText: '$label ${index + 1}'),
+                ),
+              ),
+              if (controllers.length > 1)
+                IconButton(
+                  icon: Icon(Icons.remove_circle, color: Colors.red),
+                  onPressed: () => removeField(index),
+                ),
+            ],
+          );
+        }).toList(),
+        TextButton(
+          onPressed: addField,
+          child: Text('Add $label'),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.deepPurple,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSourceSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Source',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+        ),
+        Wrap(
+          children: _sources.map((source) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: _selectedSources.contains(source),
+                  onChanged: (bool? selected) {
+                    setState(() {
+                      if (selected == true) {
+                        _selectedSources.add(source);
+                      } else {
+                        _selectedSources.remove(source);
+                      }
+                    });
+                  },
+                ),
+                Text(source),
+              ],
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
   @override
   void dispose() {
-    _jobNameController.dispose();
-    _companyController.dispose();
-    _locationController.dispose();
+    _jobNameControllers.forEach((controller) => controller.dispose());
+    _companyControllers.forEach((controller) => controller.dispose());
+    _locationControllers.forEach((controller) => controller.dispose());
     super.dispose();
   }
 }

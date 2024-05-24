@@ -10,30 +10,35 @@ class JobCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  job.jobName,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8.0),
-                Text(job.company),
-                SizedBox(height: 8.0),
-                Text(job.jobLocation),
-                SizedBox(height: 8.0),
-                Text('Published on: ${job.publicationDate}'),
-              ],
+            Text(
+              job.jobName,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple),
             ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () => _launchURL(job.sourceUrl),
-                child: Text(_getButtonText(job.source)),
+            SizedBox(height: 8.0),
+            Text('Company: ${job.company}', style: TextStyle(fontSize: 16, color: Colors.black87)),
+            SizedBox(height: 8.0),
+            Text('Location: ${job.jobLocation}', style: TextStyle(fontSize: 16, color: Colors.black87)),
+            SizedBox(height: 8.0),
+            Text('Published on: ${job.publicationDate}', style: TextStyle(fontSize: 14, color: Colors.black54)),
+            SizedBox(height: 8.0),
+            ElevatedButton(
+              onPressed: () => _launchURL(job.sourceUrl),
+              child: Text(_getButtonText(job.source)),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
             ),
           ],
@@ -42,7 +47,6 @@ class JobCard extends StatelessWidget {
     );
   }
 
-  // Method to get the button text based on the job source
   String _getButtonText(String source) {
     switch (source.toLowerCase()) {
       case 'linkedin':
@@ -59,8 +63,9 @@ class JobCard extends StatelessWidget {
   }
 
   void _launchURL(String url) async {
-    await launchUrl(Uri.parse(url));
-    if (!await canLaunchUrl(Uri.parse(url))) {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
       throw 'Could not launch $url';
     }
   }

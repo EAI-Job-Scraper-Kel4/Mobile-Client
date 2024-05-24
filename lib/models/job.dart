@@ -5,6 +5,7 @@ class Job {
   final String company;
   final String source;
   final String sourceUrl;
+  int total;
 
   Job({
     required this.jobName,
@@ -13,9 +14,9 @@ class Job {
     required this.company,
     required this.source,
     required this.sourceUrl,
+    this.total = 0, // Adding total to track the total number of jobs
   });
 
-  // Factory constructor to create a Job instance from JSON
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
       jobName: json['job_name'],
@@ -27,7 +28,6 @@ class Job {
     );
   }
 
-  // Method to convert a Job instance to JSON
   Map<String, dynamic> toJson() {
     return {
       'job_name': jobName,
