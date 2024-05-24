@@ -32,7 +32,7 @@ class JobCard extends StatelessWidget {
             Text('Published on: ${job.publicationDate}', style: TextStyle(fontSize: 14, color: Colors.black54)),
             SizedBox(height: 8.0),
             ElevatedButton(
-              onPressed: () => _launchURL(job.sourceUrl),
+              onPressed: () => _launchURL(context, job.sourceUrl),
               child: Text(_getButtonText(job.source)),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
@@ -62,11 +62,13 @@ class JobCard extends StatelessWidget {
     }
   }
 
-  void _launchURL(String url) async {
+  void _launchURL(BuildContext context, String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch $url')),
+      );
     }
   }
 }

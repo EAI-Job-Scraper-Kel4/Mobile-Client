@@ -16,6 +16,7 @@ class _JobListViewState extends State<JobListView> {
   int _currentPage = 1;
   int _totalJobs = 0;
   int _limit = 10;
+  Map<String, dynamic> _currentFilters = {};
 
   @override
   void initState() {
@@ -33,12 +34,16 @@ class _JobListViewState extends State<JobListView> {
       Map<String, dynamic> queryParams = {
         'limit': _limit.toString(),
         'page': _currentPage.toString(),
+        ...?_currentFilters,
         ...?filters,
       };
       List<Job> jobs = await fetchJobsFromApi(queryParams);
       setState(() {
         _jobs = jobs;
         _totalJobs = _jobs.isNotEmpty ? _jobs.first.total : 0;
+        if (filters != null) {
+          _currentFilters = filters;
+        }
       });
     } catch (e) {
       setState(() {
@@ -190,6 +195,7 @@ class _JobListViewState extends State<JobListView> {
                 child: Text('Next'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
+
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
