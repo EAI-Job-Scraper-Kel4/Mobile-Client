@@ -166,8 +166,8 @@ class _JobListViewState extends State<JobListView> {
 
   Widget _buildPaginationButtons() {
     int totalPages = (_totalJobs / _limit).ceil();
-    int startPage = (_currentPage - 5 > 0) ? _currentPage - 5 : 1;
-    int endPage = (_currentPage + 5 < totalPages) ? _currentPage + 5 : totalPages;
+    int startPage = (_currentPage - 3 > 0) ? _currentPage - 3 : 1;
+    int endPage = (_currentPage + 3 < totalPages) ? _currentPage + 3 : totalPages;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -184,6 +184,8 @@ class _JobListViewState extends State<JobListView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
+                  minimumSize: Size(50, 30),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
               ),
               Text(
@@ -195,10 +197,11 @@ class _JobListViewState extends State<JobListView> {
                 child: Text('Next'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
-
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
+                  minimumSize: Size(50, 30),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
               ),
             ],
@@ -216,6 +219,8 @@ class _JobListViewState extends State<JobListView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
+                  minimumSize: Size(30, 30),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
               );
             }),
