@@ -24,10 +24,10 @@ class _FilterDialogState extends State<FilterDialog> {
   ];
   List<String> _selectedSources = [];
   final List<String> _sources = [
-    'LinkedIn',
-    'Jobstreet',
-    'Kalibrr',
-    'Karir',
+    'linkedin',
+    'jobstreet',
+    'kalibrr',
+    'karir',
   ];
 
   @override
@@ -109,9 +109,9 @@ class _FilterDialogState extends State<FilterDialog> {
                       if (_formKey.currentState!.validate()) {
                         Navigator.of(context).pop();
                         widget.onApplyFilter({
-                          'jobName': _jobNameControllers.map((controller) => controller.text).toList(),
-                          'company': _companyControllers.map((controller) => controller.text).toList(),
-                          'jobLocation': _locationControllers.map((controller) => controller.text).toList(),
+                          'jobName': _jobNameControllers.map((controller) => controller.text).toList().join(','),
+                          'company': _companyControllers.map((controller) => controller.text).toList().join(','),
+                          'jobLocation': _locationControllers.map((controller) => controller.text).toList().join(','),
                           'publicationDateCategory': _publicationDateCategory,
                           'source': _selectedSources.join(','),
                         });

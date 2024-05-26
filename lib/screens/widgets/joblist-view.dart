@@ -37,6 +37,10 @@ class _JobListViewState extends State<JobListView> {
         ...?_currentFilters,
         ...?filters,
       };
+
+      // Print the filters for debugging
+      print('Fetching jobs with filters: $queryParams');
+
       List<Job> jobs = await fetchJobsFromApi(queryParams);
       setState(() {
         _jobs = jobs;
